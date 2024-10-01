@@ -1,2 +1,2 @@
 # todoList
-TODO-List webapp based on React and Node.js
+TODO list webapp based on React, Node.js and MongoDB.
