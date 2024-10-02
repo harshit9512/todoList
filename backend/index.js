@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import mongoose from "mongoose";
 import todoRoute from "./routes/todo.route.js";
+import userRoute from "./routes/user.route.js";
 
 const app = express();
 dotenv.config();
@@ -24,6 +25,7 @@ try {
 // routes
 app.use(express.json());
 app.use("/todo", todoRoute);
+app.use("/user", userRoute);
 
 app.get(`/`,(req,res) => {
     res.send(`TODO App`);

@@ -27,12 +27,22 @@ export const getTodoList = async (req, res) => {
 
 export const updateTodo = async (req, res) => {
     try {
-        const todoList = await TodoModel.findByIdAndUpdate(req.param.id, req.body, {
+        const todo = await TodoModel.findByIdAndUpdate(req.params.id, req.body, {
             new: true
         });
-        res.status(201).json({ message: "Todo updated successfully", todoList});
+        res.status(201).json({ message: "Todo updated successfully", todo});
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Error in fetching todo list", todoList});
+        res.status(500).json({ message: "Error in fetching todo list", todo});
+    }
+};
+
+export const deleteTodo = async (req, res) => {
+    try {
+        const todo = await TodoModel.findByIdAndDelete(req.params.id);
+        res.status(201).json({ message: "Todo updated successfully", todo});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({ message: "Error in fetching todo list", todo});
     }
 };
