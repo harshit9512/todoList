@@ -18,7 +18,7 @@ export const createTodo = async (req, res) => {
 export const getTodoList = async (req, res) => {
     try {
         const todoList = await TodoModel.find();
-        res.status(201).json({ message: "Todo list fetched successfully", todoList});
+        res.status(200).json({ message: "Todo list fetched successfully", todoList});
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Error in fetch todo list", todoList});
@@ -30,7 +30,7 @@ export const updateTodo = async (req, res) => {
         const todo = await TodoModel.findByIdAndUpdate(req.params.id, req.body, {
             new: true
         });
-        res.status(201).json({ message: "Todo updated successfully", todo});
+        res.status(200).json({ message: "Todo updated successfully", todo});
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Error in fetching todo list", todo});
@@ -40,7 +40,7 @@ export const updateTodo = async (req, res) => {
 export const deleteTodo = async (req, res) => {
     try {
         const todo = await TodoModel.findByIdAndDelete(req.params.id);
-        res.status(201).json({ message: "Todo updated successfully", todo});
+        res.status(200).json({ message: "Todo updated successfully", todo});
     } catch (error) {
         console.log(error);
         res.status(500).json({ message: "Error in fetching todo list", todo});

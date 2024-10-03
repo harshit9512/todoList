@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import todoRoute from "./routes/todo.route.js";
 import userRoute from "./routes/user.route.js";
+import cors from "cors";
 
 const app = express();
 dotenv.config();
@@ -22,8 +23,14 @@ try {
   console.log(error);
 }
 
-// routes
+app.use(cors({
+  origin: "*",// check tutorial @2:38 // fetch from .env file
+  // credentials: true, // enable cookies
+  methods: ["GET", "POST", "PUT", "DELETE"]
+  // allowedHeaders: ["Content-Type", "Authorization"] //  allowed headers
+}));
 app.use(express.json());
+// routes
 app.use("/todo", todoRoute);
 app.use("/user", userRoute);
 

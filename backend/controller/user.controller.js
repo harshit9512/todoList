@@ -1,6 +1,7 @@
 import User from "../model/user.model.js";
 import {z} from "zod"; // used for schema validation
 import bcrypt from "bcryptjs";
+import { generateToken } from "../jwt/token.js";
 
 // zod validation
 const userValidation = z.object({
@@ -31,9 +32,12 @@ export const register = async (req,res)=>{
         const hashPassword = await bcrypt.hash(password, 10);
         const user = new User({ username, email, password: hashPassword});
         const savedUser = await user.save();
-        res.status(201).json({
-            message: `User sign up successful`, savedUser
-        });
+        if(savedUser) {
+            generateToken();
+            res.status(201).json({
+                message: `User sign up successful`, savedUser
+            });
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({
