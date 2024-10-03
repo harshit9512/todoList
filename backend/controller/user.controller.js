@@ -1,5 +1,6 @@
 import User from "../model/user.model.js";
 import {z} from "zod"; // used for schema validation
+import bcrypt from "bcryptjs";
 
 // zod validation
 const userValidation = z.object({
@@ -19,16 +20,16 @@ export const register = async (req,res)=>{
             errors: errorMessage
         });
     }
-
-    const { username, email, password} = req.body;
-    const existingUser = await User.findOne({email});
-    if(existingUser) {
-        res.status(400).json({
-            message: "User already exists"
-        })
-    };
-    const user = new User({ username, email, password});
     try {
+        const { username, email, password} = req.body;
+        const existingUser = await User.findOne({email});
+        if(existingUser) {
+            res.status(400).json({
+                message: "User already exists"
+            })
+        };
+        const hashPassword = await bcrypt.hash(password, 10);
+        const user = new User({ username, email, password: hashPassword});
         const savedUser = await user.save();
         res.status(201).json({
             message: `User sign up successful`, savedUser
@@ -45,8 +46,8 @@ export const login = async(req,res)=>{
     console.log(`login function called`)
     try {
     const email = req.body.email;
-    const user = await User.findOne({email});
-    if(!user || !user.password === req.body.password) {
+    const user = await User.findOne({email}).select("+password");
+    if(!user || !(await bcrypt.compare(req.body.password, user.password))) {
         res.status(400).json({message: "User does not exist"})
     }
     res.status(200).json({
@@ -62,4 +63,7 @@ export const login = async(req,res)=>{
 
 export const logout=(req,res)=>{
     console.log(`logout function called`)
+    res.status(200).json({
+        message: "logout successful"
+    });
 }
