@@ -15,7 +15,7 @@ app.listen(port, () => {
 });
 
 // database connection
-const DB_URI = process.env.MONGODB_URI;
+const DB_URI = process.env.MONGODB_URI || "mongodb+srv://harshit:9512007h*H@cluster0.3s1ed.mongodb.net/todo_app";
 try {
   await mongoose.connect(DB_URI);
   console.log(`Connected to MongoDB`);

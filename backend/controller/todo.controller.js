@@ -40,6 +40,9 @@ export const updateTodo = async (req, res) => {
 export const deleteTodo = async (req, res) => {
     try {
         const todo = await TodoModel.findByIdAndDelete(req.params.id);
+        if(!todo) {
+            return res.status(404).json({ message: "Todo not found" });
+        }
         res.status(200).json({ message: "Todo updated successfully", todo});
     } catch (error) {
         console.log(error);
