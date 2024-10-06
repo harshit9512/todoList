@@ -1,14 +1,34 @@
 import { useState } from 'react';
+import axios from 'axios';
 
 export default function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     // Add your signin logic here
     console.log('Email:', email);
     console.log('Password:', password);
+    try {
+      const response = await axios.post("http://localhost:4001/user/sign-in",{email: email, password: password});
+      console.log('Sign-in successful:', response.data);
+      if(response.status === 200 || response.status === 201) {
+        // Redirect to the dashboard page
+        // window.location.href = '/dashboard';
+        alert("sign in successful");
+        console.log(response.data);
+        setEmail('');
+        setPassword('');
+      } else {
+        console.log('Sign-in failed:', response.data.message);
+        alert("Invalid email or password");
+        setEmail('');
+        setPassword('');
+      }
+    } catch (error) {
+      console.log('Error:', error);
+    }
   };
 
   return (
