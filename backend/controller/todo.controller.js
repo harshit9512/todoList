@@ -3,15 +3,15 @@ import TodoModel from "../model/todo.model.js"
 export const createTodo = async (req, res) => {
     const todo = new TodoModel({
         text: req.body.text,
-        isComplete: req.body.isComplete
+        isComplete: false
     });
 
     try {
-        const savedTodoModel = await todo.save();
-        res.status(201).json({ message: "Todo created successfully", savedTodoModel});
+        const newTodo = await todo.save();
+        res.status(201).json({ message: "Todo created successfully", newTodo});
     } catch (error) {
         console.log(error);
-        res.status(500).json({ message: "Error in todo creation", savedTodoModel});
+        res.status(500).json({ message: "Error in todo creation", newTodo});
     }
 };
 
