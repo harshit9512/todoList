@@ -1,9 +1,13 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 export default function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,9 +18,17 @@ export default function Signin() {
       const response = await axios.post("http://localhost:4001/user/sign-in",{email: email, password: password});
       console.log('Sign-in successful:', response.data);
       if(response.status === 200 || response.status === 201) {
-        // Redirect to the dashboard page
-        // window.location.href = '/dashboard';
-        alert("sign in successful");
+        // Redirect to the home page
+        // alert("sign in successful");
+        navigate("/", { state: { from: "login" }, replace: true });
+        /*
+        The navigate("/") function in React Router DOM can take two main arguments:
+        Path: The destination URL, like "/" for the home route.
+        Options: An optional second argument, an object that can include:
+          1. state: An object of data you want to pass to the destination route.
+          2. replace: A boolean value; if true, it will replace the current entry in the history stack instead of adding a new one.
+        */
+        
         console.log(response.data);
         setEmail('');
         setPassword('');
@@ -64,6 +76,9 @@ export default function Signin() {
           >
             Sign In
           </button>
+          <p className="text-sm text-center text-gray-600 mt-4">
+            <Link to="/signup" className="underline hover:text-gray-800">create new account</Link>
+          </p>
         </form>
       </div>
     </div>

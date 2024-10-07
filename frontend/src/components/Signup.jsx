@@ -1,13 +1,18 @@
 import { useState } from 'react';
 import axios from 'axios';
+import { Link } from "react-router-dom"
+import { useNavigate } from 'react-router-dom';
 
 export default function Signup() {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
+  const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
     console.log('Username:', username);
     console.log('Email:', email);
     console.log('Password:', password);
@@ -16,8 +21,9 @@ export default function Signup() {
       const response = await axios.post("http://localhost:4001/user/sign-up",{username, email, password});
       console.log('User created:', response);
       if(response.status == 200 || response.status == 201) {
-        alert('User created successfully');
         // Redirect to login page or display success message
+        navigate('/login')
+
         setUsername('');
         setEmail('');
         setPassword('');
@@ -74,6 +80,9 @@ export default function Signup() {
           >
             Sign Up
           </button>
+          <p className="text-sm text-center text-gray-600 mt-4">
+            <Link to="/login" className="underline hover:text-gray-800">already have an account? login</Link>
+          </p>
         </form>
       </div>
     </div>

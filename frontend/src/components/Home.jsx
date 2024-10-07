@@ -1,12 +1,15 @@
 /* eslint-disable no-unused-vars */
 import { useEffect, useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
   const [todos, setTodos] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [newTodo, setNewTodo] = useState("");
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchTodos = async () => {
@@ -32,13 +35,13 @@ function Home() {
   }, []);
 
   const createTodo = async () => {
-    console.log("In create-todo function",newTodo);
+    console.log("In create-todo function", newTodo);
     try {
       if (!newTodo) return;
       const response = await axios.post(
         "http://localhost:4001/todo/create",
         {
-          text: newTodo
+          text: newTodo,
         },
         {
           withCredentials: false,
@@ -92,6 +95,17 @@ function Home() {
     }
   };
 
+  const logout = async (id) => {
+    try {
+      console.log("In logout function");
+      const response = await axios.get(`http://localhost:4001/user/logout`);
+      console.log(response);
+      navigate("/login");
+    } catch (error) {
+      setError("Failed to delete Todo", error);
+    }
+  };
+
   const remainingTodos = todos.filter((todo) => !todo.isComplete).length;
 
   return (
@@ -104,7 +118,7 @@ function Home() {
           value={newTodo}
           className="flex-grow p-2 border rounded-l-md focus:outline-none"
           onChange={(e) => setNewTodo(e.target.value)}
-          onKeyDown={(e) => e.key==="Enter" && createTodo()}
+          onKeyDown={(e) => e.key === "Enter" && createTodo()}
         />
         <button
           className="bg-blue-600 border rounded-r-md text-white px-4 py-2 hover:bg-blue-900 duration-300"
@@ -149,7 +163,9 @@ function Home() {
       <p className="mt-4 text-center text-sm text-gray-800  ">
         {remainingTodos} Todos remaining
       </p>
-      <button className="mt-6 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-800 duration-300 mx-auto block">
+      <button
+        className="mt-6 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-800 duration-300 mx-auto block" onClick={logout}
+      >
         Logout
       </button>
     </div>
