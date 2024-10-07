@@ -3,7 +3,8 @@ import TodoModel from "../model/todo.model.js"
 export const createTodo = async (req, res) => {
     const todo = new TodoModel({
         text: req.body.text,
-        isComplete: false
+        isComplete: false,
+        user: req.user
     });
 
     try {
@@ -17,7 +18,8 @@ export const createTodo = async (req, res) => {
 
 export const getTodoList = async (req, res) => {
     try {
-        const todoList = await TodoModel.find();
+        const userId = req.user;
+        const todoList = await TodoModel.find({user: userId});
         res.status(200).json({ message: "Todo list fetched successfully", todoList});
     } catch (error) {
         console.log(error);
