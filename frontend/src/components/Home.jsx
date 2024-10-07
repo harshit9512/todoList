@@ -14,11 +14,16 @@ function Home() {
   useEffect(() => {
     const fetchTodos = async () => {
       try {
+        if(!localStorage.getItem("token")) {
+          navigate("/login", { replace: true });
+          return;
+        } 
         setLoading(true);
         const response = await axios.get("http://localhost:4001/todo/fetch", {
           //   withCredentials: true, // Set to true after JWT authentication is complete
           headers: {
             "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
           },
         });
         console.log(response);
@@ -44,7 +49,10 @@ function Home() {
           text: newTodo,
         },
         {
-          withCredentials: false,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          }
         }
       );
       setTodos([...todos, response.data.newTodo]);
@@ -69,6 +77,12 @@ function Home() {
             {
               ...todo,
               isComplete: !todo.isComplete,
+            },
+            {
+              headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${localStorage.getItem("token")}`
+              }
             }
           );
           console.log("test 1", response);
@@ -87,7 +101,13 @@ function Home() {
       console.log("In deleteTodo function");
 
       const response = await axios.delete(
-        `http://localhost:4001/todo/delete/${id}`
+        `http://localhost:4001/todo/delete/${id}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${localStorage.getItem("token")}`
+          }
+        }
       );
       setTodos(todos.filter((t) => t._id !== id));
     } catch (error) {
@@ -99,7 +119,8 @@ function Home() {
     try {
       console.log("In logout function");
       const response = await axios.get(`http://localhost:4001/user/logout`);
-      console.log(response);
+      console.log("User logged out:", response);
+      localStorage.removeItem("token");
       navigate("/login");
     } catch (error) {
       setError("Failed to delete Todo", error);

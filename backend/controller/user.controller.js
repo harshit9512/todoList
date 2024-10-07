@@ -33,7 +33,7 @@ export const register = async (req,res)=>{
         const user = new User({ username, email, password: hashPassword});
         const savedUser = await user.save();
         if(savedUser) {
-            generateToken();
+            
             res.status(201).json({
                 message: `User sign up successful`, savedUser
             });
@@ -54,8 +54,10 @@ export const login = async(req,res)=>{
     if(!user || !(await bcrypt.compare(req.body.password, user.password))) {
         res.status(400).json({message: "User does not exist"})
     } else {
+        const token = generateToken(user);
         res.status(200).json({
-            message: "sign-in successful"
+            message: "login successful",
+            token: token
         });
     }
     } catch (error) {

@@ -10,4 +10,9 @@ router.post("/sign-up", register);
 router.post("/sign-in", login);
 router.get("/logout", logout);
 
+  // Example protected route
+//   app.get('/protected', verifyToken, (req, res) => {
+//     res.json({ message: 'You have access' });
+//   });
+
 export default router;

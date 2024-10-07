@@ -19,8 +19,13 @@ export default function Signin() {
       console.log('Sign-in successful:', response.data);
       if(response.status === 200 || response.status === 201) {
         // Redirect to the home page
-        // alert("sign in successful");
-        navigate("/", { state: { from: "login" }, replace: true });
+        const token = response.data.token;
+        if(token) {
+          localStorage.setItem("token", token); // Store the token in local storage
+          navigate("/", { state: { from: "login" }, replace: true });
+        } else {
+          console.error("No token received from the server.");
+        }
         /*
         The navigate("/") function in React Router DOM can take two main arguments:
         Path: The destination URL, like "/" for the home route.
