@@ -2,6 +2,8 @@
 
 A Todo list web application built using the MERN stack (MongoDB, Express, React, Node.js), featuring user authentication (signup, login) and JWT-based access control.
 
+![screenshot](screenshot.jpg)
+
 ## Features
 
 - **Login/Signup:** A login page for users to authenticate and access their profile.
