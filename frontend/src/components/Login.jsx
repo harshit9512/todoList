@@ -6,52 +6,41 @@ import { useNavigate } from "react-router-dom";
 export default function Signin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your signin logic here
-    console.log('Email:', email);
-    console.log('Password:', password);
     try {
-      const response = await axios.post("http://localhost:4001/user/sign-in",{email: email, password: password});
-      console.log('Sign-in successful:', response.data);
-      if(response.status === 200 || response.status === 201) {
-        // Redirect to the home page
+      const response = await axios.post("http://localhost:4001/user/sign-in", {
+        email: email,
+        password: password,
+      });
+      if (response.status === 200 || response.status === 201) {
         const token = response.data.token;
-        if(token) {
-          localStorage.setItem("token", token); // Store the token in local storage
+        if (token) {
+          localStorage.setItem("token", token);
           navigate("/", { state: { from: "login" }, replace: true });
         } else {
-          console.error("No token received from the server.");
+          setError("No token received from the server.");
         }
-        /*
-        The navigate("/") function in React Router DOM can take two main arguments:
-        Path: The destination URL, like "/" for the home route.
-        Options: An optional second argument, an object that can include:
-          1. state: An object of data you want to pass to the destination route.
-          2. replace: A boolean value; if true, it will replace the current entry in the history stack instead of adding a new one.
-        */
-        
-        console.log(response.data);
-        setEmail('');
-        setPassword('');
       } else {
-        console.log('Sign-in failed:', response.data.message);
-        alert("Invalid email or password");
+        setError("Invalid email or password.");
         setEmail('');
         setPassword('');
       }
     } catch (error) {
+      setError("An error occurred during sign-in. Please try again.");
       console.log('Error:', error);
     }
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6">Sign In</h2>
+      <div className="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h2 className="text-3xl font-bold text-center text-gray-700 mb-6">Sign In</h2>
+        {error && <p className="text-red-500 text-center mb-4">{error}</p>}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
@@ -61,7 +50,7 @@ export default function Signin() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
             />
           </div>
           <div>
@@ -72,17 +61,17 @@ export default function Signin() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+              className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition duration-200"
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+            className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
           >
             Sign In
           </button>
           <p className="text-sm text-center text-gray-600 mt-4">
-            <Link to="/signup" className="underline hover:text-gray-800">create new account</Link>
+            <Link to="/signup" className="underline hover:text-blue-600">Create a new account</Link>
           </p>
         </form>
       </div>

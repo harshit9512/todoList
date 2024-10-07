@@ -14,20 +14,17 @@ function Home() {
   useEffect(() => {
     const fetchTodos = async () => {
       try {
-        if(!localStorage.getItem("token")) {
+        if (!localStorage.getItem("token")) {
           navigate("/login", { replace: true });
           return;
-        } 
+        }
         setLoading(true);
         const response = await axios.get("http://localhost:4001/todo/fetch", {
-          //   withCredentials: true, // Set to true after JWT authentication is complete
           headers: {
             "Content-Type": "application/json",
             "Authorization": `Bearer ${localStorage.getItem("token")}`
           },
         });
-        console.log(response);
-        console.log(response.data.todoList);
         setTodos(response.data.todoList);
         setError(null);
       } catch (error) {
@@ -40,14 +37,11 @@ function Home() {
   }, []);
 
   const createTodo = async () => {
-    console.log("In create-todo function", newTodo);
     try {
       if (!newTodo) return;
       const response = await axios.post(
         "http://localhost:4001/todo/create",
-        {
-          text: newTodo,
-        },
+        { text: newTodo },
         {
           headers: {
             "Content-Type": "application/json",
@@ -62,45 +56,30 @@ function Home() {
     }
   };
 
-  /**
-   * @param {string} id
-   * Updates the isComplete status of the Todo
-   */
   const updateTodoStatus = async (id) => {
     try {
-      console.log("In update-todo-status function", id);
-      const todo = todos.find((t) => t._id === id); // finds the todo to update from fetched todo list
+      const todo = todos.find((t) => t._id === id);
       if (todo) {
-        try {
-          const response = await axios.put(
-            `http://localhost:4001/todo/update/${id}`,
-            {
-              ...todo,
-              isComplete: !todo.isComplete,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${localStorage.getItem("token")}`
-              }
+        const response = await axios.put(
+          `http://localhost:4001/todo/update/${id}`,
+          { ...todo, isComplete: !todo.isComplete },
+          {
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${localStorage.getItem("token")}`
             }
-          );
-          console.log("test 1", response);
-          setTodos(todos.map((t) => (t._id === id ? response.data.todo : t)));
-        } catch (error) {
-          setError(error);
-        }
+          }
+        );
+        setTodos(todos.map((t) => (t._id === id ? response.data.todo : t)));
       }
     } catch (error) {
-      setError("Failed to update todo status", error);
+      setError("Failed to update todo status");
     }
   };
 
   const deleteTodo = async (id) => {
     try {
-      console.log("In deleteTodo function");
-
-      const response = await axios.delete(
+      await axios.delete(
         `http://localhost:4001/todo/delete/${id}`,
         {
           headers: {
@@ -111,38 +90,36 @@ function Home() {
       );
       setTodos(todos.filter((t) => t._id !== id));
     } catch (error) {
-      setError("Failed to delete Todo", error);
+      setError("Failed to delete Todo");
     }
   };
 
-  const logout = async (id) => {
+  const logout = async () => {
     try {
-      console.log("In logout function");
-      const response = await axios.get(`http://localhost:4001/user/logout`);
-      console.log("User logged out:", response);
+      await axios.get(`http://localhost:4001/user/logout`);
       localStorage.removeItem("token");
       navigate("/login");
     } catch (error) {
-      setError("Failed to delete Todo", error);
+      setError("Logout failed");
     }
   };
 
   const remainingTodos = todos.filter((todo) => !todo.isComplete).length;
 
   return (
-    <div className="mt-4 bg-gray-100 max-w-lg lg:max-w-xl rounded-lg shadow-lg mx-8 sm:mx-auto p-6">
-      <h1 className="text-2xl font-semibold text-center p-5">Todo App</h1>
+    <div className="mt-4 bg-white shadow-md rounded-lg max-w-lg lg:max-w-xl mx-8 sm:mx-auto p-6">
+      <h1 className="text-3xl font-bold text-center text-gray-700 mb-5">Todo App</h1>
       <div className="flex mb-4">
         <input
           type="text"
-          placeholder="add a new Todo"
+          placeholder="Add a new Todo"
           value={newTodo}
-          className="flex-grow p-2 border rounded-l-md focus:outline-none"
+          className="flex-grow p-3 border border-gray-300 rounded-l-md focus:outline-none focus:ring-2 focus:ring-blue-500"
           onChange={(e) => setNewTodo(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && createTodo()}
         />
         <button
-          className="bg-blue-600 border rounded-r-md text-white px-4 py-2 hover:bg-blue-900 duration-300"
+          className="bg-blue-600 text-white px-4 py-3 rounded-r-md hover:bg-blue-700 transition duration-200"
           onClick={createTodo}
         >
           Add
@@ -152,28 +129,25 @@ function Home() {
         {todos.map((todo, index) => (
           <li
             key={todo._id || index}
-            className="flex items-center justify-between p-3 bg-gray-100 rounded-md"
+            className="flex items-center justify-between p-4 bg-gray-100 rounded-md shadow-sm hover:shadow-md transition duration-200"
           >
             <div className="flex items-center">
-              {console.log(todo.isComplete)}
               <input
                 type="checkbox"
-                className="mr-2"
+                className="mr-3 rounded focus:ring-2 focus:ring-blue-500"
                 checked={todo.isComplete}
                 onChange={() => updateTodoStatus(todo._id)}
               />
               <span
-                className={`${
-                  todo.isComplete
-                    ? "text-gray-500 font-semibold line-through"
-                    : ""
+                className={`text-lg ${
+                  todo.isComplete ? "text-gray-400 line-through" : "text-gray-800"
                 }`}
               >
                 {todo.text}
               </span>
             </div>
             <button
-              className="text-red-500 hover:text-red-800 duration-300"
+              className="text-red-600 hover:text-red-800 duration-200"
               onClick={() => deleteTodo(todo._id)}
             >
               Delete
@@ -181,14 +155,16 @@ function Home() {
           </li>
         ))}
       </ul>
-      <p className="mt-4 text-center text-sm text-gray-800  ">
+      <p className="mt-4 text-center text-sm text-gray-600">
         {remainingTodos} Todos remaining
       </p>
       <button
-        className="mt-6 px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-800 duration-300 mx-auto block" onClick={logout}
+        className="mt-6 px-6 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition duration-200 mx-auto block"
+        onClick={logout}
       >
         Logout
       </button>
+      {error && <p className="text-red-500 text-center mt-3">{error}</p>}
     </div>
   );
 }
