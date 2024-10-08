@@ -31,7 +31,7 @@ export default function Signin() {
         setPassword('');
       }
     } catch (error) {
-      setError("An error occurred during sign-in. Please try again.");
+      setError("Something went wrong. Please try again.");
       console.log('Error:', error);
     }
   };
